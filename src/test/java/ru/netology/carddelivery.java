@@ -18,7 +18,7 @@ public class carddelivery {
 
     @Test
     void shouldсarddelivery() {
-        open("http://localhost:9999");
+        open("http://localhost:7777");
 
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
         $("[data-test-id=date] input").doubleClick();
