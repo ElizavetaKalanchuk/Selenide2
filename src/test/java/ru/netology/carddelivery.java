@@ -1,43 +1,36 @@
 package ru.netology;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
+
 public class carddelivery {
-    @BeforeEach
-    void setup() {
-        Configuration.headless = true;
-        open("http://localhost:9999");
+    private String generateDate(int addDays, String pattern) {
+        return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     @Test
-    void shouldSubmitRequest() {
-        $("[data-test-id=city] input").setValue("Москва");
+    void shouldсardвelivery() {
+        open("http://localhost:8080");
 
-        // Устанавливаем дату на 3 дня вперед
-        String deliveryDate = LocalDate.now().plusDays(3)
-                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-
-        // Очищаем поле даты
-        $("[data-test-id=date] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        $("[data-test-id=date] input").setValue(deliveryDate);
-
+        $("[data-test-id=city] input").setValue("Санкт-Петербург");
+        $("[data-test-id=date] input").doubleClick();
+        $("[data-test-id=date] input").sendKeys(generateDate(6, "dd.MM.yyyy"));
         $("[data-test-id=name] input").setValue("Иванов Иван");
-        $("[data-test-id=phone] input").setValue("+79270000000");
+        $("[data-test-id=phone] input").setValue("+79851111111");
         $("[data-test-id=agreement]").click();
-        $(".button").click();
-
-        $("[data-test-id=notification]")
-                .shouldHave(Condition.text("Успешно!"), Duration.ofSeconds(15))
-                .shouldBe(Condition.visible);
+        $$("button").find(Condition.exactText("Забронировать")).click();
+        $(withText("Успешно!")).shouldBe(Condition.hidden, Duration.ofSeconds(100));
+        $(withText("Встреча успешно забронирована")).shouldBe(Condition.hidden, Duration.ofSeconds(100));
+        $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(100));
+        $("[data-test-id=notification]").shouldHave(Condition.text("Успешно!\n" +
+                "Встреча успешно забронирована на " + generateDate(6, "dd.MM.yyyy"))).shouldBe(Condition.visible);
     }
 }
