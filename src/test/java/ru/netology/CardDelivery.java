@@ -11,14 +11,14 @@ import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
 
-public class carddelivery {
+public class CardDelivery {
     private String generateDate(int addDays, String pattern) {
         return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
     }
 
     @Test
     void shouldсarddelivery() {
-        open("http://localhost:8080");
+        open("http://localhost:9999");
 
         $("[data-test-id=city] input").setValue("Санкт-Петербург");
         $("[data-test-id=date] input").doubleClick();
